@@ -1,0 +1,36 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/claude/academic_performance_system
+collecting ... collected 15 items
+
+test_app.py::TestModelUnit::test_model_loads PASSED                      [  6%]
+test_app.py::TestModelUnit::test_model_has_three_classes PASSED          [ 13%]
+test_app.py::TestModelUnit::test_predict_returns_valid_class PASSED      [ 20%]
+test_app.py::TestModelUnit::test_high_grades_predict_high_or_medium PASSED [ 26%]
+test_app.py::TestModelUnit::test_low_grades_predict_low PASSED           [ 33%]
+test_app.py::TestModelUnit::test_predict_proba_sums_to_one PASSED        [ 40%]
+test_app.py::TestModelUnit::test_feature_importances_are_non_negative PASSED [ 46%]
+test_app.py::TestModelUnit::test_tree_depth_within_limit PASSED          [ 53%]
+test_app.py::TestRoutesIntegration::test_home_page_loads PASSED          [ 60%]
+test_app.py::TestRoutesIntegration::test_predict_form_get PASSED         [ 66%]
+test_app.py::TestRoutesIntegration::test_predict_form_post_valid_data PASSED [ 73%]
+test_app.py::TestRoutesIntegration::test_predict_form_post_missing_field_shows_error PASSED [ 80%]
+test_app.py::TestRoutesIntegration::test_history_page_loads PASSED       [ 86%]
+test_app.py::TestRoutesIntegration::test_about_page_loads_and_shows_metrics PASSED [ 93%]
+test_app.py::TestRoutesIntegration::test_prediction_is_persisted_to_history PASSED [100%]
+
+=============================== warnings summary ===============================
+test_app.py::TestModelUnit::test_predict_returns_valid_class
+test_app.py::TestModelUnit::test_high_grades_predict_high_or_medium
+test_app.py::TestModelUnit::test_low_grades_predict_low
+test_app.py::TestModelUnit::test_predict_proba_sums_to_one
+test_app.py::TestRoutesIntegration::test_predict_form_post_valid_data
+test_app.py::TestRoutesIntegration::test_predict_form_post_valid_data
+test_app.py::TestRoutesIntegration::test_prediction_is_persisted_to_history
+test_app.py::TestRoutesIntegration::test_prediction_is_persisted_to_history
+  /usr/local/lib/python3.12/dist-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but DecisionTreeClassifier was fitted with feature names
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================== 15 passed, 8 warnings in 1.75s ========================

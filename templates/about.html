@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}About the Model — Academic Performance Prediction System{% endblock %}
+{% block content %}
+  <section class="about-section">
+    <h1>About the Model</h1>
+
+    <div class="about-grid">
+      <div>
+        <h3>Algorithm</h3>
+        <p>CART Decision Tree (Gini index), implemented with scikit-learn.
+           Max depth capped at 4, minimum 5 samples per leaf, to guard against overfitting.</p>
+      </div>
+      <div>
+        <h3>Dataset</h3>
+        <p>{{ results.dataset }}<br>{{ results.n_total }} student records, split
+           {{ results.n_train }} train / {{ results.n_test }} test.</p>
+      </div>
+      <div>
+        <h3>Input Features</h3>
+        <p>{{ results.features | join(', ') }}</p>
+      </div>
+      <div>
+        <h3>Output Classes</h3>
+        <p>{{ results.classes | join(', ') }}</p>
+      </div>
+    </div>
+
+    <h3>Test Set Performance</h3>
+    <table class="metrics-table">
+      <tr><td>Accuracy</td><td>{{ (results.accuracy * 100) | round(1) }}%</td></tr>
+      <tr><td>Precision (weighted)</td><td>{{ (results.precision_weighted * 100) | round(1) }}%</td></tr>
+      <tr><td>Recall (weighted)</td><td>{{ (results.recall_weighted * 100) | round(1) }}%</td></tr>
+      <tr><td>F1-score (weighted)</td><td>{{ (results.f1_weighted * 100) | round(1) }}%</td></tr>
+    </table>
+
+    <h3>Feature Importance</h3>
+    <table class="metrics-table">
+      {% for feat, imp in results.feature_importances.items() %}
+        <tr><td>{{ feat }}</td><td>{{ (imp * 100) | round(1) }}%</td></tr>
+      {% endfor %}
+    </table>
+  </section>
+{% endblock %}

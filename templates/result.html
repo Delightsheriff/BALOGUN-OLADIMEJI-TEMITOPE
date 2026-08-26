@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Prediction Result — Academic Performance Prediction System{% endblock %}
+{% block content %}
+  <section class="result-section">
+    <h1>Prediction Result</h1>
+    <p class="lead">Student: <strong>{{ student_name }}</strong></p>
+
+    <div class="result-card result-{{ prediction | lower }}">
+      <span class="result-label">Predicted Performance Category</span>
+      <span class="result-value">{{ prediction }}</span>
+    </div>
+
+    <div class="proba-bars">
+      <h3>Prediction Confidence</h3>
+      {% for cls, pct in proba_map.items() %}
+        <div class="proba-row">
+          <span class="proba-name">{{ cls }}</span>
+          <div class="proba-track">
+            <div class="proba-fill proba-{{ cls | lower }}" style="width: {{ pct }}%;"></div>
+          </div>
+          <span class="proba-pct">{{ pct }}%</span>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="explain-card">
+      <h3>Why this prediction?</h3>
+      <p>
+        The single strongest factor in this model's decisions overall is
+        <strong>{{ top_factor }}</strong>. Because this is a Decision Tree, every
+        prediction follows a traceable path of simple rules rather than an opaque
+        calculation — this is the key advantage of the algorithm chosen for this project.
+      </p>
+    </div>
+
+    <div class="inputs-summary">
+      <h3>Input Data Used</h3>
+      <table>
+        {% for label, value in inputs.items() %}
+          <tr><td>{{ label }}</td><td>{{ value }}</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+
+    <a class="btn btn-secondary" href="{{ url_for('predict') }}">Make Another Prediction</a>
+    <a class="btn btn-outline" href="{{ url_for('history') }}">View History</a>
+  </section>
+{% endblock %}

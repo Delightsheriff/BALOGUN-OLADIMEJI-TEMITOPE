@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Home — Academic Performance Prediction System{% endblock %}
+{% block content %}
+  <section class="hero">
+    <h1>Students' Academic Performance Prediction System</h1>
+    <p class="subtitle">Using the Decision Tree Algorithm</p>
+    <p class="lead">
+      A lightweight decision-support tool that predicts a student's likely academic
+      performance category from a small set of academic inputs, using a single,
+      interpretable Decision Tree model. Built for lecturers and academic advisers
+      who need an early, explainable signal — not a black box.
+    </p>
+    <a class="btn btn-primary" href="{{ url_for('predict') }}">Make a Prediction</a>
+  </section>
+
+  <section class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-value">{{ (results.accuracy * 100) | round(1) }}%</span>
+      <span class="stat-label">Model Accuracy</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{{ (results.precision_weighted * 100) | round(1) }}%</span>
+      <span class="stat-label">Precision</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{{ (results.recall_weighted * 100) | round(1) }}%</span>
+      <span class="stat-label">Recall</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-value">{{ results.n_total }}</span>
+      <span class="stat-label">Training Records</span>
+    </div>
+  </section>
+
+  <section class="how-it-works">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="step-num">1</span>
+        <h3>Enter student data</h3>
+        <p>Study time, past failures, absences, and first/second period grades.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">2</span>
+        <h3>Decision Tree classifies</h3>
+        <p>A trained CART model, built with scikit-learn, walks the input through a small set of learned if-then rules.</p>
+      </div>
+      <div class="step">
+        <span class="step-num">3</span>
+        <h3>Get an explainable result</h3>
+        <p>A predicted performance category — Low, Medium, or High — plus the factor that most influenced it.</p>
+      </div>
+    </div>
+  </section>
+{% endblock %}

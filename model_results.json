@@ -1,0 +1,63 @@
+{
+  "dataset": "UCI Student Performance (student-mat.csv), Cortez & Silva (2008)",
+  "n_total": 395,
+  "n_train": 316,
+  "n_test": 79,
+  "features": [
+    "studytime",
+    "failures",
+    "absences",
+    "G1",
+    "G2"
+  ],
+  "classes": [
+    "High",
+    "Low",
+    "Medium"
+  ],
+  "class_distribution": {
+    "Medium": 192,
+    "Low": 130,
+    "High": 73
+  },
+  "accuracy": 0.8481,
+  "precision_weighted": 0.8558,
+  "recall_weighted": 0.8481,
+  "f1_weighted": 0.8469,
+  "confusion_matrix": [
+    [
+      15,
+      0,
+      0
+    ],
+    [
+      0,
+      23,
+      3
+    ],
+    [
+      2,
+      7,
+      29
+    ]
+  ],
+  "confusion_matrix_labels": [
+    "High",
+    "Low",
+    "Medium"
+  ],
+  "feature_importances": {
+    "G2": 0.9643,
+    "absences": 0.0221,
+    "G1": 0.0076,
+    "studytime": 0.006,
+    "failures": 0.0
+  },
+  "classification_report_text": "              precision    recall  f1-score   support\n\n        High       0.88      1.00      0.94        15\n         Low       0.77      0.88      0.82        26\n      Medium       0.91      0.76      0.83        38\n\n    accuracy                           0.85        79\n   macro avg       0.85      0.88      0.86        79\nweighted avg       0.86      0.85      0.85        79\n",
+  "model_params": {
+    "criterion": "gini",
+    "max_depth": 4,
+    "min_samples_leaf": 5,
+    "random_state": 42
+  }
+}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Prediction History — Academic Performance Prediction System{% endblock %}
+{% block content %}
+  <section class="history-section">
+    <h1>Prediction History</h1>
+    <p class="lead">Most recent predictions made using this system.</p>
+
+    {% if rows|length == 0 %}
+      <p class="empty-state">No predictions have been made yet.</p>
+    {% else %}
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Student</th>
+            <th>Study Time</th>
+            <th>Failures</th>
+            <th>Absences</th>
+            <th>G1</th>
+            <th>G2</th>
+            <th>Predicted</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+            <tr>
+              <td>{{ row['id'] }}</td>
+              <td>{{ row['student_name'] }}</td>
+              <td>{{ row['studytime'] }}</td>
+              <td>{{ row['failures'] }}</td>
+              <td>{{ row['absences'] }}</td>
+              <td>{{ row['g1'] }}</td>
+              <td>{{ row['g2'] }}</td>
+              <td><span class="badge badge-{{ row['predicted_category'] | lower }}">{{ row['predicted_category'] }}</span></td>
+              <td>{{ row['created_at'] }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endif %}
+  </section>
+{% endblock %}

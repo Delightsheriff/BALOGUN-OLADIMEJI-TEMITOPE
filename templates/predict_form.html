@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}New Prediction — Academic Performance Prediction System{% endblock %}
+{% block content %}
+  <section class="form-section">
+    <h1>New Prediction</h1>
+    <p class="lead">Enter the student's academic details below.</p>
+
+    {% if error %}
+      <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('predict') }}" class="predict-form">
+      <div class="form-group">
+        <label for="student_name">Student Name (optional)</label>
+        <input type="text" id="student_name" name="student_name" placeholder="e.g. J. Amadi">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="studytime">Weekly Study Time</label>
+          <select id="studytime" name="studytime" required>
+            <option value="1">1 — Less than 2 hours</option>
+            <option value="2">2 — 2 to 5 hours</option>
+            <option value="3">3 — 5 to 10 hours</option>
+            <option value="4">4 — More than 10 hours</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="failures">Past Class Failures</label>
+          <input type="number" id="failures" name="failures" min="0" max="10" value="0" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="absences">Number of Absences</label>
+          <input type="number" id="absences" name="absences" min="0" max="100" value="0" required>
+        </div>
+
+        <div class="form-group">
+          <label for="g1">First Period Grade (0–20)</label>
+          <input type="number" id="g1" name="g1" min="0" max="20" required>
+        </div>
+
+        <div class="form-group">
+          <label for="g2">Second Period Grade (0–20)</label>
+          <input type="number" id="g2" name="g2" min="0" max="20" required>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Predict Performance</button>
+    </form>
+  </section>
+{% endblock %}
