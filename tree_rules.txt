@@ -1,34 +1,93 @@
-|--- G2 <= 9.50
-|   |--- G2 <= 7.50
-|   |   |--- class: Low
-|   |--- G2 >  7.50
-|   |   |--- absences <= 1.00
-|   |   |   |--- G2 <= 8.50
+=== BALANCED FULL-TERM TREE RULES ===
+|--- G1 <= 11.50
+|   |--- G1 <= 9.50
+|   |   |--- G2 <= 9.50
+|   |   |   |--- G1 <= 7.50
 |   |   |   |   |--- class: Low
-|   |   |   |--- G2 >  8.50
+|   |   |   |--- G1 >  7.50
 |   |   |   |   |--- class: Low
-|   |   |--- absences >  1.00
-|   |   |   |--- absences <= 10.50
-|   |   |   |   |--- class: Low
-|   |   |   |--- absences >  10.50
-|   |   |   |   |--- class: Low
-|--- G2 >  9.50
-|   |--- G2 <= 14.50
-|   |   |--- G2 <= 13.50
-|   |   |   |--- G1 <= 9.50
-|   |   |   |   |--- class: Medium
-|   |   |   |--- G1 >  9.50
-|   |   |   |   |--- class: Medium
-|   |   |--- G2 >  13.50
+|   |   |--- G2 >  9.50
 |   |   |   |--- studytime <= 2.50
 |   |   |   |   |--- class: Medium
 |   |   |   |--- studytime >  2.50
-|   |   |   |   |--- class: High
-|   |--- G2 >  14.50
+|   |   |   |   |--- class: Medium
+|   |--- G1 >  9.50
+|   |   |--- G2 <= 9.50
+|   |   |   |--- studytime <= 1.50
+|   |   |   |   |--- class: Low
+|   |   |   |--- studytime >  1.50
+|   |   |   |   |--- class: Low
+|   |   |--- G2 >  9.50
+|   |   |   |--- G2 <= 12.50
+|   |   |   |   |--- class: Medium
+|   |   |   |--- G2 >  12.50
+|   |   |   |   |--- class: Medium
+|--- G1 >  11.50
+|   |--- G2 <= 13.50
+|   |   |--- absences <= 8.50
+|   |   |   |--- failures <= 0.50
+|   |   |   |   |--- class: Medium
+|   |   |   |--- failures >  0.50
+|   |   |   |   |--- class: Medium
+|   |   |--- absences >  8.50
+|   |   |   |--- G2 <= 12.50
+|   |   |   |   |--- class: Medium
+|   |   |   |--- G2 >  12.50
+|   |   |   |   |--- class: Medium
+|   |--- G2 >  13.50
 |   |   |--- G1 <= 15.50
-|   |   |   |--- G1 <= 14.50
+|   |   |   |--- G2 <= 14.50
 |   |   |   |   |--- class: High
-|   |   |   |--- G1 >  14.50
+|   |   |   |--- G2 >  14.50
 |   |   |   |   |--- class: High
 |   |   |--- G1 >  15.50
-|   |   |   |--- class: High
+|   |   |   |--- G2 <= 15.50
+|   |   |   |   |--- class: High
+|   |   |   |--- G2 >  15.50
+|   |   |   |   |--- class: High
+
+
+=== EARLY-WARNING TREE RULES (WITHOUT G2) ===
+|--- G1 <= 11.50
+|   |--- G1 <= 9.50
+|   |   |--- G1 <= 7.50
+|   |   |   |--- studytime <= 1.50
+|   |   |   |   |--- class: Low
+|   |   |   |--- studytime >  1.50
+|   |   |   |   |--- class: Low
+|   |   |--- G1 >  7.50
+|   |   |   |--- absences <= 8.50
+|   |   |   |   |--- class: Low
+|   |   |   |--- absences >  8.50
+|   |   |   |   |--- class: Low
+|   |--- G1 >  9.50
+|   |   |--- G1 <= 10.50
+|   |   |   |--- absences <= 1.00
+|   |   |   |   |--- class: Low
+|   |   |   |--- absences >  1.00
+|   |   |   |   |--- class: Medium
+|   |   |--- G1 >  10.50
+|   |   |   |--- studytime <= 1.50
+|   |   |   |   |--- class: Medium
+|   |   |   |--- studytime >  1.50
+|   |   |   |   |--- class: Medium
+|--- G1 >  11.50
+|   |--- G1 <= 14.50
+|   |   |--- absences <= 5.00
+|   |   |   |--- absences <= 1.50
+|   |   |   |   |--- class: High
+|   |   |   |--- absences >  1.50
+|   |   |   |   |--- class: Medium
+|   |   |--- absences >  5.00
+|   |   |   |--- class: Medium
+|   |--- G1 >  14.50
+|   |   |--- G1 <= 15.50
+|   |   |   |--- absences <= 3.00
+|   |   |   |   |--- class: High
+|   |   |   |--- absences >  3.00
+|   |   |   |   |--- class: High
+|   |   |--- G1 >  15.50
+|   |   |   |--- absences <= 7.50
+|   |   |   |   |--- class: High
+|   |   |   |--- absences >  7.50
+|   |   |   |   |--- class: High

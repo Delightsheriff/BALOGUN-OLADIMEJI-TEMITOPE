@@ -10,6 +10,12 @@
     "G1",
     "G2"
   ],
+  "early_features": [
+    "studytime",
+    "failures",
+    "absences",
+    "G1"
+  ],
   "classes": [
     "High",
     "Low",
@@ -20,10 +26,10 @@
     "Low": 130,
     "High": 73
   },
-  "accuracy": 0.8481,
-  "precision_weighted": 0.8558,
-  "recall_weighted": 0.8481,
-  "f1_weighted": 0.8469,
+  "accuracy": 0.8228,
+  "precision_weighted": 0.8351,
+  "recall_weighted": 0.8228,
+  "f1_weighted": 0.8199,
   "confusion_matrix": [
     [
       15,
@@ -36,9 +42,9 @@
       3
     ],
     [
-      2,
+      4,
       7,
-      29
+      27
     ]
   ],
   "confusion_matrix_labels": [
@@ -47,17 +53,48 @@
     "Medium"
   ],
   "feature_importances": {
-    "G2": 0.9643,
-    "absences": 0.0221,
-    "G1": 0.0076,
-    "studytime": 0.006,
-    "failures": 0.0
+    "G1": 0.5002,
+    "G2": 0.491,
+    "studytime": 0.0054,
+    "failures": 0.002,
+    "absences": 0.0014
   },
-  "classification_report_text": "              precision    recall  f1-score   support\n\n        High       0.88      1.00      0.94        15\n         Low       0.77      0.88      0.82        26\n      Medium       0.91      0.76      0.83        38\n\n    accuracy                           0.85        79\n   macro avg       0.85      0.88      0.86        79\nweighted avg       0.86      0.85      0.85        79\n",
+  "classification_report_text": "              precision    recall  f1-score   support\n\n        High       0.79      1.00      0.88        15\n         Low       0.77      0.88      0.82        26\n      Medium       0.90      0.71      0.79        38\n\n    accuracy                           0.82        79\n   macro avg       0.82      0.87      0.83        79\nweighted avg       0.84      0.82      0.82        79\n",
+  "early_model": {
+    "accuracy": 0.7468,
+    "precision_weighted": 0.798,
+    "recall_weighted": 0.7468,
+    "f1_weighted": 0.7355,
+    "confusion_matrix": [
+      [
+        15,
+        0,
+        0
+      ],
+      [
+        0,
+        24,
+        2
+      ],
+      [
+        10,
+        8,
+        20
+      ]
+    ],
+    "feature_importances": {
+      "G1": 0.8736,
+      "absences": 0.1176,
+      "studytime": 0.0088,
+      "failures": 0.0
+    },
+    "classification_report_text": "              precision    recall  f1-score   support\n\n        High       0.60      1.00      0.75        15\n         Low       0.75      0.92      0.83        26\n      Medium       0.91      0.53      0.67        38\n\n    accuracy                           0.75        79\n   macro avg       0.75      0.82      0.75        79\nweighted avg       0.80      0.75      0.74        79\n"
+  },
   "model_params": {
     "criterion": "gini",
     "max_depth": 4,
-    "min_samples_leaf": 5,
+    "max_features": 3,
+    "min_samples_leaf": 4,
     "random_state": 42
   }
 }
