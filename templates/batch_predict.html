@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Batch Prediction — Academic Performance Prediction System{% endblock %}
+{% block content %}
+  <section class="form-section">
+    <h1>Class Batch Prediction</h1>
+    <p class="lead">Upload a CSV file containing multiple students' records for automated batch classification.</p>
+
+    {% if error %}
+      <div class="alert alert-error">{{ error }}</div>
+    {% endif %}
+
+    <div class="batch-upload-card">
+      <h3>Upload Class CSV</h3>
+      <p class="field-hint" style="margin-bottom: 16px;">
+        Your CSV must contain columns: <code>studytime</code> (1-4), <code>failures</code> (0-10), 
+        <code>absences</code> (0-100), <code>g1</code> (0-20), and optionally <code>student_name</code> and <code>g2</code> (0-20).
+      </p>
+
+      <form method="POST" action="{{ url_for('batch_predict') }}" enctype="multipart/form-data" class="batch-form">
+        <div class="form-group">
+          <input type="file" name="file" id="file" accept=".csv" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Process Batch Prediction</button>
+      </form>
+    </div>
+
+    {% if results_list %}
+    <div class="batch-results-container" style="margin-top: 36px;">
+      <h2>Batch Classification Results ({{ mode_str }} Mode)</h2>
+
+      <!-- Summary Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-value">{{ total }}</span>
+          <span class="stat-label">Total Processed</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" style="color: var(--green);">{{ counts['High'] }}</span>
+          <span class="stat-label">High Performers</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" style="color: var(--amber);">{{ counts['Medium'] }}</span>
+          <span class="stat-label">Medium / Passing</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" style="color: var(--red);">{{ counts['Low'] }}</span>
+          <span class="stat-label">Low / At-Risk</span>
+        </div>
+      </div>
+
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Student Identifier</th>
+            <th>Study Time</th>
+            <th>Failures</th>
+            <th>Absences</th>
+            <th>G1 (CA)</th>
+            <th>G2 (Exam)</th>
+            <th>Predicted Performance</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in results_list %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td><strong>{{ r.name }}</strong></td>
+              <td>{{ r.studytime }}</td>
+              <td>{{ r.failures }}</td>
+              <td>{{ r.absences }}</td>
+              <td>{{ r.g1 }}</td>
+              <td>{{ r.g2 }}</td>
+              <td>
+                <span class="badge badge-{{ r.predicted | lower }}">
+                  {{ r.predicted }}
+                </span>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div style="margin-top: 24px;">
+        <a class="btn btn-primary" href="{{ url_for('export_history') }}">Export All History to CSV</a>
+        <a class="btn btn-outline" href="{{ url_for('batch_predict') }}">Upload Another File</a>
+      </div>
+    </div>
+    {% endif %}
+  </section>
+{% endblock %}

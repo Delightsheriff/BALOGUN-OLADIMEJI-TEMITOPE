@@ -2,54 +2,79 @@
 {% block title %}New Prediction — Academic Performance Prediction System{% endblock %}
 {% block content %}
   <section class="form-section">
-    <h1>New Prediction</h1>
-    <p class="lead">Enter the student's academic details below.</p>
+    <h1>New Student Prediction</h1>
+    <p class="lead">Select your prediction stage and enter the student's academic records below.</p>
 
     {% if error %}
       <div class="alert alert-error">{{ error }}</div>
     {% endif %}
 
+    <!-- Prediction Mode Selector -->
+    <div class="mode-tabs">
+      <a href="{{ url_for('predict', mode='full') }}" class="mode-tab {% if mode != 'early' %}active{% endif %}">
+        <span class="mode-tab-title">📊 Full-Term Mode</span>
+        <span class="mode-tab-sub">Includes Continuous Assessment (G1) + Midterm Exam (G2)</span>
+      </a>
+      <a href="{{ url_for('predict', mode='early') }}" class="mode-tab {% if mode == 'early' %}active{% endif %}">
+        <span class="mode-tab-title">⚡ Early-Warning Mode</span>
+        <span class="mode-tab-sub">Continuous Assessment (CA / G1) Phase — Before G2 is written</span>
+      </a>
+    </div>
+
     <form method="POST" action="{{ url_for('predict') }}" class="predict-form">
+      <input type="hidden" name="mode" value="{{ mode }}">
+
       <div class="form-group">
-        <label for="student_name">Student Name (optional)</label>
-        <input type="text" id="student_name" name="student_name" placeholder="e.g. J. Amadi">
+        <label for="student_name">Student Name or Identifier (optional)</label>
+        <input type="text" id="student_name" name="student_name" placeholder="e.g. Balogun Temitope">
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label for="studytime">Weekly Study Time</label>
+          <label for="studytime">Weekly Study Time <span class="field-hint">(1-4 Scale)</span></label>
           <select id="studytime" name="studytime" required>
-            <option value="1">1 — Less than 2 hours</option>
-            <option value="2">2 — 2 to 5 hours</option>
-            <option value="3">3 — 5 to 10 hours</option>
-            <option value="4">4 — More than 10 hours</option>
+            <option value="1">1 — Less than 2 hours / week</option>
+            <option value="2" selected>2 — 2 to 5 hours / week</option>
+            <option value="3">3 — 5 to 10 hours / week</option>
+            <option value="4">4 — More than 10 hours / week</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label for="failures">Past Class Failures</label>
+          <label for="failures">Past Class Failures <span class="field-hint">(0 to 10)</span></label>
           <input type="number" id="failures" name="failures" min="0" max="10" value="0" required>
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label for="absences">Number of Absences</label>
+          <label for="absences">Class Absences <span class="field-hint">(Total missed days)</span></label>
           <input type="number" id="absences" name="absences" min="0" max="100" value="0" required>
         </div>
 
         <div class="form-group">
-          <label for="g1">First Period Grade (0–20)</label>
-          <input type="number" id="g1" name="g1" min="0" max="20" required>
+          <label for="g1">First Period Grade (G1 / CA) <span class="field-hint">(0–20 Scale)</span></label>
+          <input type="number" id="g1" name="g1" min="0" max="20" placeholder="e.g. 14" required>
         </div>
 
+        {% if mode != 'early' %}
         <div class="form-group">
-          <label for="g2">Second Period Grade (0–20)</label>
-          <input type="number" id="g2" name="g2" min="0" max="20" required>
+          <label for="g2">Second Period Grade (G2) <span class="field-hint">(0–20 Scale)</span></label>
+          <input type="number" id="g2" name="g2" min="0" max="20" placeholder="e.g. 15" required>
         </div>
+        {% endif %}
       </div>
 
-      <button type="submit" class="btn btn-primary">Predict Performance</button>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          {% if mode == 'early' %}
+            Run Early-Warning Prediction
+          {% else %}
+            Predict Academic Performance
+          {% endif %}
+        </button>
+      </div>
     </form>
   </section>
 {% endblock %}
+

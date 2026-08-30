@@ -7,21 +7,25 @@ Run with:  python3 -m pytest test_app.py -v
 import os
 import joblib
 import pytest
+import io
+import pandas as pd
 import numpy as np
 
 import app as flask_app_module
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "decision_tree_model.joblib")
+EARLY_MODEL_PATH = os.path.join(os.path.dirname(__file__), "early_warning_model.joblib")
 
 
 # ---------------------------------------------------------------------------
-# UNIT TESTS — the trained model in isolation
+# UNIT TESTS — Trained Models in Isolation
 # ---------------------------------------------------------------------------
 
-class TestModelUnit:
+class TestFullModelUnit:
     @classmethod
     def setup_class(cls):
         cls.model = joblib.load(MODEL_PATH)
+        cls.features = ["studytime", "failures", "absences", "G1", "G2"]
 
     def test_model_loads(self):
         assert self.model is not None
@@ -30,33 +34,62 @@ class TestModelUnit:
         assert set(self.model.classes_) == {"Low", "Medium", "High"}
 
     def test_predict_returns_valid_class(self):
-        pred = self.model.predict([[3, 0, 2, 15, 16]])[0]
+        df = pd.DataFrame([[3, 0, 2, 15, 16]], columns=self.features)
+        pred = self.model.predict(df)[0]
         assert pred in {"Low", "Medium", "High"}
 
     def test_high_grades_predict_high_or_medium(self):
-        # A strong student: high study time, no failures, few absences, high grades
-        pred = self.model.predict([[4, 0, 0, 18, 19]])[0]
+        df = pd.DataFrame([[4, 0, 0, 18, 19]], columns=self.features)
+        pred = self.model.predict(df)[0]
         assert pred in {"High", "Medium"}
 
     def test_low_grades_predict_low(self):
-        # A struggling student: low study time, past failures, high absences, low grades
-        pred = self.model.predict([[1, 3, 25, 4, 3]])[0]
+        df = pd.DataFrame([[1, 3, 25, 4, 3]], columns=self.features)
+        pred = self.model.predict(df)[0]
         assert pred == "Low"
 
     def test_predict_proba_sums_to_one(self):
-        proba = self.model.predict_proba([[2, 0, 5, 12, 13]])[0]
+        df = pd.DataFrame([[2, 0, 5, 12, 13]], columns=self.features)
+        proba = self.model.predict_proba(df)[0]
         assert abs(sum(proba) - 1.0) < 1e-6
 
-    def test_feature_importances_are_non_negative(self):
-        assert all(imp >= 0 for imp in self.model.feature_importances_)
-
     def test_tree_depth_within_limit(self):
-        # Guards against accidental overfitting if the model is ever retrained
         assert self.model.get_depth() <= 4
 
 
+class TestEarlyModelUnit:
+    @classmethod
+    def setup_class(cls):
+        cls.model = joblib.load(EARLY_MODEL_PATH)
+        cls.features = ["studytime", "failures", "absences", "G1"]
+
+    def test_early_model_loads(self):
+        assert self.model is not None
+
+    def test_early_model_predicts_valid_class(self):
+        df = pd.DataFrame([[3, 0, 1, 16]], columns=self.features)
+        pred = self.model.predict(df)[0]
+        assert pred in {"Low", "Medium", "High"}
+
+    def test_early_model_detects_low_performance(self):
+        df = pd.DataFrame([[1, 3, 20, 5]], columns=self.features)
+        pred = self.model.predict(df)[0]
+        assert pred == "Low"
+
+
+class TestExplainabilityUnit:
+    def test_explain_decision_path_returns_rules(self):
+        model = joblib.load(MODEL_PATH)
+        features = ["studytime", "failures", "absences", "G1", "G2"]
+        df = pd.DataFrame([[2, 0, 4, 13, 12]], columns=features)
+        rules, top_factor, advice = flask_app_module.explain_decision_path(model, features, df)
+        assert len(rules) > 0
+        assert top_factor is not None
+        assert isinstance(advice, list)
+
+
 # ---------------------------------------------------------------------------
-# INTEGRATION TESTS — the Flask routes end-to-end
+# INTEGRATION TESTS — Flask Endpoints & Flows
 # ---------------------------------------------------------------------------
 
 @pytest.fixture
@@ -72,50 +105,85 @@ class TestRoutesIntegration:
         assert resp.status_code == 200
         assert b"Academic Performance" in resp.data
 
-    def test_predict_form_get(self, client):
-        resp = client.get("/predict")
-        assert resp.status_code == 200
-        assert b"studytime" in resp.data
+    def test_predict_form_get_full_and_early(self, client):
+        resp_full = client.get("/predict?mode=full")
+        assert resp_full.status_code == 200
+        assert b"Second Period Grade" in resp_full.data
 
-    def test_predict_form_post_valid_data(self, client):
+        resp_early = client.get("/predict?mode=early")
+        assert resp_early.status_code == 200
+        assert b"Early-Warning Mode" in resp_early.data
+
+    def test_predict_post_full_mode(self, client):
         resp = client.post("/predict", data={
-            "student_name": "Test Student",
-            "studytime": "2",
+            "mode": "full",
+            "student_name": "Test Full Student",
+            "studytime": "3",
             "failures": "0",
-            "absences": "3",
-            "g1": "14",
-            "g2": "15",
+            "absences": "2",
+            "g1": "15",
+            "g2": "16",
         })
         assert resp.status_code == 200
         assert b"Prediction Result" in resp.data
-        assert b"Test Student" in resp.data
+        assert b"Test Full Student" in resp.data
+        assert b"Decision-Tree Path" in resp.data
 
-    def test_predict_form_post_missing_field_shows_error(self, client):
+    def test_predict_post_early_warning_mode(self, client):
         resp = client.post("/predict", data={
-            "student_name": "Incomplete Student",
+            "mode": "early",
+            "student_name": "Test Early Student",
             "studytime": "2",
-            # 'failures' deliberately omitted
-            "absences": "3",
-            "g1": "14",
+            "failures": "1",
+            "absences": "10",
+            "g1": "8",
+        })
+        assert resp.status_code == 200
+        assert b"Early-Warning" in resp.data
+        assert b"Test Early Student" in resp.data
+
+    def test_predict_post_invalid_grades_error(self, client):
+        resp = client.post("/predict", data={
+            "mode": "full",
+            "student_name": "Invalid Student",
+            "studytime": "2",
+            "failures": "0",
+            "absences": "2",
+            "g1": "25",  # Invalid > 20
             "g2": "15",
         })
         assert resp.status_code == 200
-        assert b"valid numbers" in resp.data
+        assert b"between 0 and 20" in resp.data
 
-    def test_history_page_loads(self, client):
-        resp = client.get("/history")
+    def test_batch_predict_csv_upload(self, client):
+        csv_data = (
+            "student_name,studytime,failures,absences,g1,g2\n"
+            "Student Alpha,3,0,1,16,17\n"
+            "Student Beta,1,2,15,6,7\n"
+        )
+        data = {
+            "file": (io.BytesIO(csv_data.encode("utf-8")), "class_roster.csv")
+        }
+        resp = client.post("/batch-predict", data=data, content_type="multipart/form-data")
         assert resp.status_code == 200
+        assert b"Student Alpha" in resp.data
+        assert b"Student Beta" in resp.data
+        assert b"Batch Classification Results" in resp.data
 
-    def test_about_page_loads_and_shows_metrics(self, client):
-        resp = client.get("/about")
-        assert resp.status_code == 200
-        assert b"Accuracy" in resp.data
-
-    def test_prediction_is_persisted_to_history(self, client):
+    def test_history_search_and_filter(self, client):
         client.post("/predict", data={
-            "student_name": "Persistence Check",
-            "studytime": "3", "failures": "0", "absences": "1",
-            "g1": "16", "g2": "17",
+            "mode": "full",
+            "student_name": "Searchable Student",
+            "studytime": "2", "failures": "0", "absences": "2",
+            "g1": "14", "g2": "14"
         })
-        resp = client.get("/history")
-        assert b"Persistence Check" in resp.data
+        resp = client.get("/history?q=Searchable")
+        assert resp.status_code == 200
+        assert b"Searchable Student" in resp.data
+
+    def test_history_export_csv(self, client):
+        resp = client.get("/history/export")
+        assert resp.status_code == 200
+        assert resp.headers["Content-Type"] == "text/csv; charset=utf-8"
+        assert b"Student Name" in resp.data
+

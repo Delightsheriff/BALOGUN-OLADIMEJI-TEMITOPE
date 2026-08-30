@@ -2,38 +2,72 @@
 {% block title %}Prediction History — Academic Performance Prediction System{% endblock %}
 {% block content %}
   <section class="history-section">
-    <h1>Prediction History</h1>
-    <p class="lead">Most recent predictions made using this system.</p>
+    <div class="history-header">
+      <div>
+        <h1>Prediction History</h1>
+        <p class="lead">Audit trail of all student classifications performed by the system.</p>
+      </div>
+      <div>
+        <a href="{{ url_for('export_history') }}" class="btn btn-primary">⬇ Export to CSV</a>
+      </div>
+    </div>
+
+    <!-- Filter & Search Toolbar -->
+    <form method="GET" action="{{ url_for('history') }}" class="history-filter-bar">
+      <div class="filter-group">
+        <input type="text" name="q" value="{{ q }}" placeholder="Search by student name..." class="search-input">
+      </div>
+      <div class="filter-group">
+        <select name="category" class="filter-select" onchange="this.form.submit()">
+          <option value="">All Categories</option>
+          <option value="High" {% if category == 'High' %}selected{% endif %}>High Performance</option>
+          <option value="Medium" {% if category == 'Medium' %}selected{% endif %}>Medium Performance</option>
+          <option value="Low" {% if category == 'Low' %}selected{% endif %}>Low (At-Risk)</option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-secondary">Filter</button>
+      {% if q or category %}
+        <a href="{{ url_for('history') }}" class="btn btn-outline">Clear</a>
+      {% endif %}
+    </form>
 
     {% if rows|length == 0 %}
-      <p class="empty-state">No predictions have been made yet.</p>
+      <p class="empty-state">No matching prediction records found.</p>
     {% else %}
       <table class="history-table">
         <thead>
           <tr>
             <th>#</th>
             <th>Student</th>
+            <th>Mode</th>
             <th>Study Time</th>
             <th>Failures</th>
             <th>Absences</th>
-            <th>G1</th>
-            <th>G2</th>
-            <th>Predicted</th>
-            <th>Date</th>
+            <th>G1 (CA)</th>
+            <th>G2 (Exam)</th>
+            <th>Predicted Result</th>
+            <th>Date &amp; Time</th>
           </tr>
         </thead>
         <tbody>
           {% for row in rows %}
             <tr>
               <td>{{ row['id'] }}</td>
-              <td>{{ row['student_name'] }}</td>
+              <td><strong>{{ row['student_name'] }}</strong></td>
+              <td>
+                <span class="mode-pill">{{ row['prediction_mode'] if 'prediction_mode' in row.keys() else 'Full Term' }}</span>
+              </td>
               <td>{{ row['studytime'] }}</td>
               <td>{{ row['failures'] }}</td>
               <td>{{ row['absences'] }}</td>
               <td>{{ row['g1'] }}</td>
-              <td>{{ row['g2'] }}</td>
-              <td><span class="badge badge-{{ row['predicted_category'] | lower }}">{{ row['predicted_category'] }}</span></td>
-              <td>{{ row['created_at'] }}</td>
+              <td>{{ row['g2'] if row['g2'] != -1 else '—' }}</td>
+              <td>
+                <span class="badge badge-{{ row['predicted_category'] | lower }}">
+                  {{ row['predicted_category'] }}
+                </span>
+              </td>
+              <td class="text-muted">{{ row['created_at'] }}</td>
             </tr>
           {% endfor %}
         </tbody>
@@ -41,3 +75,4 @@
     {% endif %}
   </section>
 {% endblock %}
+
