@@ -223,11 +223,53 @@ body {
 .about-grid h3 { margin-bottom: 6px; font-size: 0.95rem; color: var(--navy-dark); }
 .about-grid p { margin: 0; color: var(--muted); font-size: 0.9rem; }
 
+.author-badge {
+  display: inline-block;
+  background: #eef4fa;
+  border: 1px solid var(--border);
+  color: var(--navy-dark);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.88rem;
+  margin-bottom: 16px;
+}
+
+.project-info-card {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--navy);
+  border-radius: 8px;
+  padding: 18px 22px;
+  margin: 24px 0;
+}
+.project-info-card h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: var(--navy-dark);
+  font-size: 1.05rem;
+}
+.project-info-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 20px;
+}
+.project-info-grid p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.student-credit {
+  margin-top: 6px;
+  color: var(--navy-dark);
+  font-size: 0.88rem;
+}
+
 .empty-state { color: var(--muted); text-align: center; padding: 40px 0; }
 
 .site-footer {
   text-align: center;
-  padding: 20px;
+  padding: 24px 20px;
   color: var(--muted);
   font-size: 0.82rem;
   border-top: 1px solid var(--border);
@@ -235,5 +277,5 @@ body {
 }
 
 @media (max-width: 700px) {
-  .stats-grid, .steps, .about-grid { grid-template-columns: 1fr; }
+  .stats-grid, .steps, .about-grid, .project-info-grid { grid-template-columns: 1fr; }
 }

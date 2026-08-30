@@ -4,6 +4,9 @@
 Final year project — Department of Computer Science, Faculty of Computing,
 University of Port Harcourt.
 
+**Student:** BALOGUN OLADIMEJI TEMITOPE  
+**Matriculation Number:** U2022/5570093
+
 ## What this is
 A web-based decision-support tool that predicts a student's likely academic
 performance category (Low / Medium / High) from five academic inputs, using
