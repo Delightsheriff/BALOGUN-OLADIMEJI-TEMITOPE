@@ -3,35 +3,41 @@
 {% block content %}
   <section class="hero">
     <div class="author-badge">
-      <span>Researcher: <strong>BALOGUN OLADIMEJI TEMITOPE</strong> (Matric No: <strong>U2022/5570093</strong>)</span>
+      <span>{{ project.student }} &bull; {{ project.matric_number }}</span>
     </div>
     <h1>Students' Academic Performance Prediction System</h1>
     <p class="subtitle">Using the Decision Tree Algorithm</p>
     <p class="lead">
-      A lightweight decision-support tool that predicts a student's likely academic
-      performance category from a small set of academic inputs, using a single,
-      interpretable Decision Tree model. Built for lecturers and academic advisers
-      who need an early, explainable signal — not a black box.
+      This system predicts whether a student is likely to finish a course in the
+      Low, Medium or High performance band, using five records a lecturer already
+      has: study time, past failures, absences, and the first and second period
+      grades. Every prediction shows the exact rules the Decision Tree followed,
+      so an adviser can see why a student was flagged.
     </p>
-    <a class="btn btn-primary" href="{{ url_for('predict') }}">Make a Prediction</a>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="{{ url_for('predict') }}">Make a Prediction</a>
+      <a class="btn btn-outline" href="{{ url_for('batch_predict') }}">Upload a Class File</a>
+    </div>
   </section>
 
   <section class="stats-grid">
     <div class="stat-card">
       <span class="stat-value">{{ (results.accuracy * 100) | round(1) }}%</span>
-      <span class="stat-label">Model Accuracy</span>
+      <span class="stat-label">Accuracy on the {{ results.n_test }}-record test set</span>
+    </div>
+    {% if new_data %}
+    <div class="stat-card">
+      <span class="stat-value">{{ new_data.full_model.accuracy }}%</span>
+      <span class="stat-label">Accuracy on {{ new_data.records }} new, unseen records</span>
+    </div>
+    {% endif %}
+    <div class="stat-card">
+      <span class="stat-value">{{ (results.early_model.accuracy * 100) | round(1) }}%</span>
+      <span class="stat-label">Early-warning accuracy (before G2)</span>
     </div>
     <div class="stat-card">
-      <span class="stat-value">{{ (results.precision_weighted * 100) | round(1) }}%</span>
-      <span class="stat-label">Precision</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-value">{{ (results.recall_weighted * 100) | round(1) }}%</span>
-      <span class="stat-label">Recall</span>
-    </div>
-    <div class="stat-card">
-      <span class="stat-value">{{ results.n_total }}</span>
-      <span class="stat-label">Training Records</span>
+      <span class="stat-value">{{ results.n_train }}</span>
+      <span class="stat-label">Training records (of {{ results.n_total }})</span>
     </div>
   </section>
 
@@ -41,18 +47,27 @@
       <div class="step">
         <span class="step-num">1</span>
         <h3>Enter student data</h3>
-        <p>Study time, past failures, absences, and first/second period grades.</p>
+        <p>Type in one student's records, or upload a CSV for a whole class.</p>
       </div>
       <div class="step">
         <span class="step-num">2</span>
-        <h3>Decision Tree classifies</h3>
-        <p>A trained CART model, built with scikit-learn, walks the input through a small set of learned if-then rules.</p>
+        <h3>The Decision Tree classifies</h3>
+        <p>A trained CART model passes the record through a small set of learned if-then rules.</p>
       </div>
       <div class="step">
         <span class="step-num">3</span>
-        <h3>Get an explainable result</h3>
-        <p>A predicted performance category — Low, Medium, or High — plus the factor that most influenced it.</p>
+        <h3>Read an explained result</h3>
+        <p>You get Low, Medium or High, the model's confidence, and the rules that led there.</p>
       </div>
+    </div>
+  </section>
+
+  <section class="categories">
+    <h2>What the categories mean</h2>
+    <div class="steps">
+      <div class="step cat cat-low"><h3>Low</h3><p>Expected final grade below 10/20. The student is at risk of failing.</p></div>
+      <div class="step cat cat-medium"><h3>Medium</h3><p>Expected final grade from 10 to 14/20. A pass.</p></div>
+      <div class="step cat cat-high"><h3>High</h3><p>Expected final grade of 15/20 or above.</p></div>
     </div>
   </section>
 {% endblock %}

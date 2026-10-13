@@ -41,10 +41,10 @@
 
     <!-- Dynamic Decision Path Trace -->
     <div class="explain-card">
-      <h3>🔍 Traceable Decision-Tree Path (Explainability)</h3>
+      <h3>Decision-Tree Path (why this result)</h3>
       <p>
-        Most influential local factor for this student: <strong>{{ top_factor }}</strong>.
-        Below is the exact conditional branch traversed through the Decision Tree:
+        Most influential factor on this student's path: <strong>{{ top_factor }}</strong>.
+        These are the conditions the Decision Tree checked, in order:
       </p>
 
       <div class="decision-trace-list">
@@ -52,7 +52,7 @@
           <div class="trace-item">
             <div class="trace-num">{{ loop.index }}</div>
             <div class="trace-content">
-              <strong>{{ rule.feature_label }}</strong>: {{ rule.description }}
+              {{ rule.description }}
             </div>
             <div class="trace-badge">Condition Met</div>
           </div>
@@ -63,7 +63,7 @@
     <!-- Academic Advisory & Remediation -->
     {% if advice %}
     <div class="advisory-card">
-      <h3>📋 Actionable Academic Advising / Recommendations</h3>
+      <h3>Advising Notes</h3>
       <ul class="advisory-list">
         {% for tip in advice %}
           <li>{{ tip }}</li>

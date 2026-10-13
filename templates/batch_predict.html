@@ -3,86 +3,128 @@
 {% block content %}
   <section class="form-section">
     <h1>Class Batch Prediction</h1>
-    <p class="lead">Upload a CSV file containing multiple students' records for automated batch classification.</p>
+    <p class="lead">Upload a CSV with a whole class's records and the system classifies every student at once.</p>
 
     {% if error %}
       <div class="alert alert-error">{{ error }}</div>
     {% endif %}
 
-    <div class="batch-upload-card">
-      <h3>Upload Class CSV</h3>
-      <p class="field-hint" style="margin-bottom: 16px;">
-        Your CSV must contain columns: <code>studytime</code> (1-4), <code>failures</code> (0-10), 
-        <code>absences</code> (0-100), <code>g1</code> (0-20), and optionally <code>student_name</code> and <code>g2</code> (0-20).
-      </p>
-
-      <form method="POST" action="{{ url_for('batch_predict') }}" enctype="multipart/form-data" class="batch-form">
-        <div class="form-group">
+    <div class="batch-grid">
+      <div class="batch-upload-card">
+        <h3>Upload a class CSV</h3>
+        <p class="field-hint">
+          Required columns: <code>studytime</code> (1-4), <code>failures</code> (0-10),
+          <code>absences</code> (0-100) and <code>G1</code> (0-20).
+          Optional: <code>student_name</code>, <code>G2</code> (0-20), and <code>G3</code>, the actual final grade.
+          With <code>G2</code> the full-term model is used; without it, the early-warning model.
+          With <code>G3</code> the system also scores its own accuracy.
+          Comma- and semicolon-separated files both work.
+        </p>
+        <form method="POST" action="{{ url_for('batch_predict') }}" enctype="multipart/form-data" class="batch-form">
           <input type="file" name="file" id="file" accept=".csv" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Process Batch Prediction</button>
-      </form>
+          <button type="submit" class="btn btn-primary">Predict Class</button>
+        </form>
+        <p class="field-hint"><a href="{{ url_for('sample_data', name='class_template.csv') }}">Download a 5-student template</a></p>
+      </div>
+
+      <div class="batch-upload-card">
+        <h3>Try it on new data</h3>
+        <p class="field-hint">
+          Run the model on 649 student records it has never seen: the Portuguese-language
+          course file from the same UCI dataset (Cortez &amp; Silva, 2008). The file
+          includes the real final grades, so the system checks each prediction.
+        </p>
+        <form method="POST" action="{{ url_for('batch_predict') }}">
+          <input type="hidden" name="sample" value="1">
+          <button type="submit" class="btn btn-secondary">Run on 649 New Records</button>
+        </form>
+        <p class="field-hint"><a href="{{ url_for('sample_data', name='student-por.csv') }}">Download this file</a></p>
+      </div>
     </div>
 
-    {% if results_list %}
-    <div class="batch-results-container" style="margin-top: 36px;">
-      <h2>Batch Classification Results ({{ mode_str }} Mode)</h2>
+    {% if skipped %}
+      <details class="alert alert-warn">
+        <summary>{{ skipped|length }} row(s) skipped because of missing or out-of-range values</summary>
+        <ul>{% for s in skipped[:50] %}<li>{{ s }}</li>{% endfor %}</ul>
+      </details>
+    {% endif %}
 
-      <!-- Summary Stats -->
+    {% if results_list %}
+    <div class="batch-results-container">
+      <h2>Batch Classification Results</h2>
+      <p class="field-hint">{{ filename }}, classified with the {{ mode_str }} model.</p>
+
       <div class="stats-grid">
         <div class="stat-card">
           <span class="stat-value">{{ total }}</span>
-          <span class="stat-label">Total Processed</span>
+          <span class="stat-label">Students classified</span>
         </div>
         <div class="stat-card">
-          <span class="stat-value" style="color: var(--green);">{{ counts['High'] }}</span>
-          <span class="stat-label">High Performers</span>
+          <span class="stat-value text-high">{{ counts['High'] }}</span>
+          <span class="stat-label">High</span>
         </div>
         <div class="stat-card">
-          <span class="stat-value" style="color: var(--amber);">{{ counts['Medium'] }}</span>
-          <span class="stat-label">Medium / Passing</span>
+          <span class="stat-value text-medium">{{ counts['Medium'] }}</span>
+          <span class="stat-label">Medium</span>
         </div>
         <div class="stat-card">
-          <span class="stat-value" style="color: var(--red);">{{ counts['Low'] }}</span>
-          <span class="stat-label">Low / At-Risk</span>
+          <span class="stat-value text-low">{{ counts['Low'] }}</span>
+          <span class="stat-label">Low (at risk)</span>
         </div>
       </div>
 
+      {% if evaluation %}
+      <div class="evaluation-card">
+        <h3>Accuracy against the actual final grades (G3)</h3>
+        <p class="eval-headline"><span class="stat-value">{{ evaluation.accuracy }}%</span>
+          {{ evaluation.correct }} of {{ evaluation.n }} predictions matched the student's real category.</p>
+        <table class="metrics-table confusion">
+          <tr><th>Actual \ Predicted</th><th>High</th><th>Low</th><th>Medium</th></tr>
+          {% for actual in ['High', 'Low', 'Medium'] %}
+            <tr><th>{{ actual }}</th>
+              {% for p in ['High', 'Low', 'Medium'] %}
+                <td class="{% if p == actual %}diag{% endif %}">{{ evaluation.matrix[actual][p] }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+      {% endif %}
+
+      <div class="table-wrap">
       <table class="history-table">
         <thead>
           <tr>
-            <th>#</th>
-            <th>Student Identifier</th>
-            <th>Study Time</th>
-            <th>Failures</th>
-            <th>Absences</th>
-            <th>G1 (CA)</th>
-            <th>G2 (Exam)</th>
-            <th>Predicted Performance</th>
+            <th>#</th><th>Student</th><th>Study Time</th><th>Failures</th><th>Absences</th>
+            <th>G1</th><th>G2</th><th>Predicted</th>
+            {% if evaluation %}<th>Actual</th>{% endif %}
+            <th>Top Factor</th>
           </tr>
         </thead>
         <tbody>
-          {% for r in results_list %}
+          {% for r in results_list[:200] %}
             <tr>
               <td>{{ loop.index }}</td>
               <td><strong>{{ r.name }}</strong></td>
               <td>{{ r.studytime }}</td>
               <td>{{ r.failures }}</td>
               <td>{{ r.absences }}</td>
-              <td>{{ r.g1 }}</td>
-              <td>{{ r.g2 }}</td>
-              <td>
-                <span class="badge badge-{{ r.predicted | lower }}">
-                  {{ r.predicted }}
-                </span>
-              </td>
+              <td>{{ r.G1 }}</td>
+              <td>{{ r.G2 if r.G2 is defined else '—' }}</td>
+              <td><span class="badge badge-{{ r.predicted | lower }}">{{ r.predicted }}</span></td>
+              {% if evaluation %}
+                <td>{% if r.actual %}<span class="badge badge-{{ r.actual | lower }}">{{ r.actual }}</span>{% if r.actual != r.predicted %} <span class="miss">✗</span>{% endif %}{% else %}—{% endif %}</td>
+              {% endif %}
+              <td class="text-muted">{{ r.top_factor }}</td>
             </tr>
           {% endfor %}
         </tbody>
       </table>
+      </div>
+      {% if total > 200 %}<p class="field-hint">Showing the first 200 of {{ total }} students. Export the history to see them all.</p>{% endif %}
 
-      <div style="margin-top: 24px;">
-        <a class="btn btn-primary" href="{{ url_for('export_history') }}">Export All History to CSV</a>
+      <div class="result-actions">
+        <a class="btn btn-primary" href="{{ url_for('export_history') }}">Export History to CSV</a>
         <a class="btn btn-outline" href="{{ url_for('batch_predict') }}">Upload Another File</a>
       </div>
     </div>

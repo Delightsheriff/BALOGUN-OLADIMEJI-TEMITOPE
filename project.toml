@@ -1,0 +1,12 @@
+# Project details shown in the app (home page, About page and footer).
+# Edit this file on GitHub and commit; Render redeploys automatically.
+
+title = "Students' Academic Performance Prediction System Using Decision Tree Algorithm"
+student = "Balogun Oladimeji Temitope"
+matric_number = "U2022/5570093"
+supervisor = "To be added"
+session = "To be added"
+department = "Department of Computer Science"
+faculty = "Faculty of Computing"
+university = "University of Port Harcourt"
+date = "August 2026"

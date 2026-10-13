@@ -1,28 +1,35 @@
 ============================= test session starts ==============================
-platform darwin -- Python 3.14.6, pytest-9.0.3, pluggy-1.6.0 -- /opt/anaconda3/bin/python3
+platform linux -- Python 3.12.3, pytest-8.2.2, pluggy-1.6.0 -- /tmp/claude-0/-home-claude-nkoro-thankgod-chidi/051c5773-aab3-56e5-921e-33d76d128e63/scratchpad/venv/bin/python
 cachedir: .pytest_cache
-rootdir: /Users/MAC/Downloads/academic_performance_system
-plugins: anyio-4.12.1
-collecting ... collected 19 items
+rootdir: ~/balogun-oladimeji-temitope
+collecting ... collected 27 items
 
-test_app.py::TestFullModelUnit::test_model_loads PASSED                  [  5%]
-test_app.py::TestFullModelUnit::test_model_has_three_classes PASSED      [ 10%]
-test_app.py::TestFullModelUnit::test_predict_returns_valid_class PASSED  [ 15%]
-test_app.py::TestFullModelUnit::test_high_grades_predict_high_or_medium PASSED [ 21%]
-test_app.py::TestFullModelUnit::test_low_grades_predict_low PASSED       [ 26%]
-test_app.py::TestFullModelUnit::test_predict_proba_sums_to_one PASSED    [ 31%]
-test_app.py::TestFullModelUnit::test_tree_depth_within_limit PASSED      [ 36%]
-test_app.py::TestEarlyModelUnit::test_early_model_loads PASSED           [ 42%]
-test_app.py::TestEarlyModelUnit::test_early_model_predicts_valid_class PASSED [ 47%]
-test_app.py::TestEarlyModelUnit::test_early_model_detects_low_performance PASSED [ 52%]
-test_app.py::TestExplainabilityUnit::test_explain_decision_path_returns_rules PASSED [ 57%]
-test_app.py::TestRoutesIntegration::test_home_page_loads PASSED          [ 63%]
-test_app.py::TestRoutesIntegration::test_predict_form_get_full_and_early PASSED [ 68%]
-test_app.py::TestRoutesIntegration::test_predict_post_full_mode PASSED   [ 73%]
-test_app.py::TestRoutesIntegration::test_predict_post_early_warning_mode PASSED [ 78%]
-test_app.py::TestRoutesIntegration::test_predict_post_invalid_grades_error PASSED [ 84%]
-test_app.py::TestRoutesIntegration::test_batch_predict_csv_upload PASSED [ 89%]
-test_app.py::TestRoutesIntegration::test_history_search_and_filter PASSED [ 94%]
-test_app.py::TestRoutesIntegration::test_history_export_csv PASSED       [100%]
+test_app.py::TestFullModelUnit::test_model_loads PASSED                  [  3%]
+test_app.py::TestFullModelUnit::test_model_has_three_classes PASSED      [  7%]
+test_app.py::TestFullModelUnit::test_predict_returns_valid_class PASSED  [ 11%]
+test_app.py::TestFullModelUnit::test_high_grades_predict_high_or_medium PASSED [ 14%]
+test_app.py::TestFullModelUnit::test_low_grades_predict_low PASSED       [ 18%]
+test_app.py::TestFullModelUnit::test_predict_proba_sums_to_one PASSED    [ 22%]
+test_app.py::TestFullModelUnit::test_tree_depth_within_limit PASSED      [ 25%]
+test_app.py::TestEarlyModelUnit::test_early_model_loads PASSED           [ 29%]
+test_app.py::TestEarlyModelUnit::test_early_model_predicts_valid_class PASSED [ 33%]
+test_app.py::TestEarlyModelUnit::test_early_model_detects_low_performance PASSED [ 37%]
+test_app.py::TestExplainabilityUnit::test_explain_decision_path_returns_rules PASSED [ 40%]
+test_app.py::TestRoutesIntegration::test_home_page_loads PASSED          [ 44%]
+test_app.py::TestRoutesIntegration::test_predict_form_get_full_and_early PASSED [ 48%]
+test_app.py::TestRoutesIntegration::test_predict_post_full_mode PASSED   [ 51%]
+test_app.py::TestRoutesIntegration::test_predict_post_early_warning_mode PASSED [ 55%]
+test_app.py::TestRoutesIntegration::test_predict_post_invalid_grades_error PASSED [ 59%]
+test_app.py::TestRoutesIntegration::test_batch_predict_csv_upload PASSED [ 62%]
+test_app.py::TestRoutesIntegration::test_history_search_and_filter PASSED [ 66%]
+test_app.py::TestRoutesIntegration::test_history_export_csv PASSED       [ 70%]
+test_app.py::TestRoutesIntegration::test_health_endpoint PASSED          [ 74%]
+test_app.py::TestRoutesIntegration::test_project_details_come_from_config PASSED [ 77%]
+test_app.py::TestRoutesIntegration::test_predict_rejects_non_numeric_input PASSED [ 81%]
+test_app.py::TestRoutesIntegration::test_batch_reads_semicolon_uci_file_and_scores_it PASSED [ 85%]
+test_app.py::TestRoutesIntegration::test_batch_skips_invalid_rows PASSED [ 88%]
+test_app.py::TestRoutesIntegration::test_batch_sample_new_data PASSED    [ 92%]
+test_app.py::TestRoutesIntegration::test_source_code_download PASSED     [ 96%]
+test_app.py::TestNewDataUnit::test_full_model_accuracy_on_unseen_records PASSED [100%]
 
-============================== 19 passed in 1.58s ==============================
+============================== 27 passed in 4.67s ==============================

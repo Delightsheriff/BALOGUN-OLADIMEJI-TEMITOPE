@@ -5,13 +5,19 @@ Prediction System.
 Run with:  python3 -m pytest test_app.py -v
 """
 import os
+import tempfile
+import zipfile
 import joblib
 import pytest
 import io
 import pandas as pd
 import numpy as np
 
+# Use a throwaway database so tests never write into the real history.
+os.environ["DB_PATH"] = os.path.join(tempfile.mkdtemp(), "test_predictions.db")
+
 import app as flask_app_module
+import predictor
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "decision_tree_model.joblib")
 EARLY_MODEL_PATH = os.path.join(os.path.dirname(__file__), "early_warning_model.joblib")
@@ -82,7 +88,7 @@ class TestExplainabilityUnit:
         model = joblib.load(MODEL_PATH)
         features = ["studytime", "failures", "absences", "G1", "G2"]
         df = pd.DataFrame([[2, 0, 4, 13, 12]], columns=features)
-        rules, top_factor, advice = flask_app_module.explain_decision_path(model, features, df)
+        rules, top_factor, advice = predictor.explain_decision_path(model, features, df)
         assert len(rules) > 0
         assert top_factor is not None
         assert isinstance(advice, list)
@@ -187,3 +193,59 @@ class TestRoutesIntegration:
         assert resp.headers["Content-Type"] == "text/csv; charset=utf-8"
         assert b"Student Name" in resp.data
 
+
+    def test_health_endpoint(self, client):
+        resp = client.get("/health")
+        assert resp.status_code == 200
+        assert resp.data == b"ok"
+
+    def test_project_details_come_from_config(self, client):
+        resp = client.get("/about")
+        assert flask_app_module.project["matric_number"].encode() in resp.data
+        assert flask_app_module.project["supervisor"].encode() in resp.data
+
+    def test_predict_rejects_non_numeric_input(self, client):
+        resp = client.post("/predict", data={
+            "mode": "full", "studytime": "2", "failures": "0",
+            "absences": "abc", "g1": "12", "g2": "12",
+        })
+        assert b"must be a whole number" in resp.data
+
+    def test_batch_reads_semicolon_uci_file_and_scores_it(self, client):
+        csv_data = (
+            '"school";"studytime";"failures";"absences";"G1";"G2";"G3"\n'
+            '"GP";2;0;4;15;16;16\n'
+            '"GP";1;3;20;4;3;0\n'
+        )
+        data = {"file": (io.BytesIO(csv_data.encode()), "uci_extract.csv")}
+        resp = client.post("/batch-predict", data=data, content_type="multipart/form-data")
+        assert b"Accuracy against the actual final grades" in resp.data
+        assert b"Full Term model" in resp.data
+
+    def test_batch_skips_invalid_rows(self, client):
+        csv_data = "studytime,failures,absences,g1\n2,0,3,12\n9,0,3,12\n"
+        data = {"file": (io.BytesIO(csv_data.encode()), "early.csv")}
+        resp = client.post("/batch-predict", data=data, content_type="multipart/form-data")
+        assert b"Early Warning model" in resp.data
+        assert b"1 row(s) skipped" in resp.data
+
+    def test_batch_sample_new_data(self, client):
+        resp = client.post("/batch-predict", data={"sample": "1"})
+        assert b"649" in resp.data
+        assert b"Accuracy against the actual final grades" in resp.data
+
+    def test_source_code_download(self, client):
+        resp = client.get("/download/source")
+        assert resp.status_code == 200
+        names = zipfile.ZipFile(io.BytesIO(resp.data)).namelist()
+        assert "academic-performance-system/app.py" in names
+        assert not any(n.endswith(".db") for n in names)
+
+
+class TestNewDataUnit:
+    def test_full_model_accuracy_on_unseen_records(self):
+        df = predictor.read_student_csv("sample_data/student-por.csv")
+        rows, skipped, mode = predictor.predict_class(df)
+        result = predictor.score(rows)
+        assert result["n"] == 649 and not skipped
+        assert result["accuracy"] >= 80

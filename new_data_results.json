@@ -1,0 +1,62 @@
+{
+  "file": "sample_data/student-por.csv",
+  "records": 649,
+  "full_model": {
+    "mode": "Full Term",
+    "scored": 649,
+    "skipped": 0,
+    "correct": 553,
+    "accuracy": 85.2,
+    "confusion_matrix": [
+      [
+        126,
+        0,
+        5
+      ],
+      [
+        0,
+        89,
+        11
+      ],
+      [
+        25,
+        55,
+        338
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "High",
+      "Low",
+      "Medium"
+    ]
+  },
+  "early_model": {
+    "mode": "Early Warning",
+    "scored": 649,
+    "skipped": 0,
+    "correct": 430,
+    "accuracy": 66.3,
+    "confusion_matrix": [
+      [
+        99,
+        1,
+        31
+      ],
+      [
+        0,
+        92,
+        8
+      ],
+      [
+        83,
+        96,
+        239
+      ]
+    ],
+    "confusion_matrix_labels": [
+      "High",
+      "Low",
+      "Medium"
+    ]
+  }
+}

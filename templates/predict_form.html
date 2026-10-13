@@ -12,12 +12,12 @@
     <!-- Prediction Mode Selector -->
     <div class="mode-tabs">
       <a href="{{ url_for('predict', mode='full') }}" class="mode-tab {% if mode != 'early' %}active{% endif %}">
-        <span class="mode-tab-title">📊 Full-Term Mode</span>
-        <span class="mode-tab-sub">Includes Continuous Assessment (G1) + Midterm Exam (G2)</span>
+        <span class="mode-tab-title">Full-Term Mode</span>
+        <span class="mode-tab-sub">Uses G1 and G2. Most accurate.</span>
       </a>
       <a href="{{ url_for('predict', mode='early') }}" class="mode-tab {% if mode == 'early' %}active{% endif %}">
-        <span class="mode-tab-title">⚡ Early-Warning Mode</span>
-        <span class="mode-tab-sub">Continuous Assessment (CA / G1) Phase — Before G2 is written</span>
+        <span class="mode-tab-title">Early-Warning Mode</span>
+        <span class="mode-tab-sub">Uses G1 only, before G2 is written.</span>
       </a>
     </div>
 
@@ -26,41 +26,41 @@
 
       <div class="form-group">
         <label for="student_name">Student Name or Identifier (optional)</label>
-        <input type="text" id="student_name" name="student_name" placeholder="e.g. Balogun Temitope">
+        <input type="text" id="student_name" name="student_name" placeholder="e.g. Chidinma Okafor" value="{{ form.get('student_name', '') }}" maxlength="100">
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label for="studytime">Weekly Study Time <span class="field-hint">(1-4 Scale)</span></label>
           <select id="studytime" name="studytime" required>
-            <option value="1">1 — Less than 2 hours / week</option>
-            <option value="2" selected>2 — 2 to 5 hours / week</option>
-            <option value="3">3 — 5 to 10 hours / week</option>
-            <option value="4">4 — More than 10 hours / week</option>
+            <option value="1" {% if form.get('studytime') == '1' %}selected{% endif %}>1 — Less than 2 hours / week</option>
+            <option value="2" {% if form.get('studytime', '2') == '2' %}selected{% endif %}>2 — 2 to 5 hours / week</option>
+            <option value="3" {% if form.get('studytime') == '3' %}selected{% endif %}>3 — 5 to 10 hours / week</option>
+            <option value="4" {% if form.get('studytime') == '4' %}selected{% endif %}>4 — More than 10 hours / week</option>
           </select>
         </div>
 
         <div class="form-group">
           <label for="failures">Past Class Failures <span class="field-hint">(0 to 10)</span></label>
-          <input type="number" id="failures" name="failures" min="0" max="10" value="0" required>
+          <input type="number" id="failures" name="failures" min="0" max="10" value="{{ form.get('failures', '0') }}" required>
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label for="absences">Class Absences <span class="field-hint">(Total missed days)</span></label>
-          <input type="number" id="absences" name="absences" min="0" max="100" value="0" required>
+          <input type="number" id="absences" name="absences" min="0" max="100" value="{{ form.get('absences', '0') }}" required>
         </div>
 
         <div class="form-group">
           <label for="g1">First Period Grade (G1 / CA) <span class="field-hint">(0–20 Scale)</span></label>
-          <input type="number" id="g1" name="g1" min="0" max="20" placeholder="e.g. 14" required>
+          <input type="number" id="g1" name="g1" min="0" max="20" placeholder="e.g. 14" value="{{ form.get('g1', '') }}" required>
         </div>
 
         {% if mode != 'early' %}
         <div class="form-group">
           <label for="g2">Second Period Grade (G2) <span class="field-hint">(0–20 Scale)</span></label>
-          <input type="number" id="g2" name="g2" min="0" max="20" placeholder="e.g. 15" required>
+          <input type="number" id="g2" name="g2" min="0" max="20" placeholder="e.g. 15" value="{{ form.get('g2', '') }}" required>
         </div>
         {% endif %}
       </div>

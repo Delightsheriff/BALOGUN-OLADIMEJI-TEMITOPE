@@ -79,6 +79,7 @@ full_model.fit(X_train_f, y_train_f)
 
 y_pred_f = full_model.predict(X_test_f)
 acc_f = accuracy_score(y_test_f, y_pred_f)
+train_acc_f = accuracy_score(y_train_f, full_model.predict(X_train_f))
 prec_f = precision_score(y_test_f, y_pred_f, average="weighted", zero_division=0)
 rec_f = recall_score(y_test_f, y_pred_f, average="weighted", zero_division=0)
 f1_f = f1_score(y_test_f, y_pred_f, average="weighted", zero_division=0)
@@ -89,7 +90,7 @@ importances_f = dict(zip(FULL_FEATURES, full_model.feature_importances_))
 importances_f_sorted = dict(sorted(importances_f.items(), key=lambda x: -x[1]))
 
 print("\n=== BALANCED FULL-TERM MODEL ===")
-print(f"Accuracy:  {acc_f:.4f}")
+print(f"Accuracy:  {acc_f:.4f} (training set: {train_acc_f:.4f})")
 print(f"Precision: {prec_f:.4f}")
 print(f"Recall:    {rec_f:.4f}")
 print(f"F1-score:  {f1_f:.4f}")
@@ -116,6 +117,7 @@ early_model.fit(X_train_e, y_train_e)
 
 y_pred_e = early_model.predict(X_test_e)
 acc_e = accuracy_score(y_test_e, y_pred_e)
+train_acc_e = accuracy_score(y_train_e, early_model.predict(X_train_e))
 prec_e = precision_score(y_test_e, y_pred_e, average="weighted", zero_division=0)
 rec_e = recall_score(y_test_e, y_pred_e, average="weighted", zero_division=0)
 f1_e = f1_score(y_test_e, y_pred_e, average="weighted", zero_division=0)
@@ -126,7 +128,7 @@ importances_e = dict(zip(EARLY_FEATURES, early_model.feature_importances_))
 importances_e_sorted = dict(sorted(importances_e.items(), key=lambda x: -x[1]))
 
 print("\n=== EARLY WARNING MODEL (CA PHASE) ===")
-print(f"Accuracy:  {acc_e:.4f}")
+print(f"Accuracy:  {acc_e:.4f} (training set: {train_acc_e:.4f})")
 print(f"Precision: {prec_e:.4f}")
 print(f"Recall:    {rec_e:.4f}")
 print(f"F1-score:  {f1_e:.4f}")
@@ -145,6 +147,7 @@ results = {
     "classes": labels,
     "class_distribution": y.value_counts().to_dict(),
     "accuracy": round(acc_f, 4),
+    "train_accuracy": round(train_acc_f, 4),
     "precision_weighted": round(prec_f, 4),
     "recall_weighted": round(rec_f, 4),
     "f1_weighted": round(f1_f, 4),
@@ -154,6 +157,7 @@ results = {
     "classification_report_text": report_f,
     "early_model": {
         "accuracy": round(acc_e, 4),
+        "train_accuracy": round(train_acc_e, 4),
         "precision_weighted": round(prec_e, 4),
         "recall_weighted": round(rec_e, 4),
         "f1_weighted": round(f1_e, 4),
@@ -166,6 +170,7 @@ results = {
         "max_depth": 4,
         "max_features": 3,
         "min_samples_leaf": 4,
+        "class_weight": "balanced",
         "random_state": RANDOM_STATE
     }
 }

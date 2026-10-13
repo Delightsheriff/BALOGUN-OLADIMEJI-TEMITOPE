@@ -59,7 +59,7 @@ body {
   margin-left: 20px;
   font-size: 0.92rem;
 }
-.site-header nav a:hover { color: white; }
+
 
 .container {
   max-width: 1100px;
@@ -285,12 +285,14 @@ body {
   padding: 16px;
   text-decoration: none;
   color: var(--text);
-  transition: all 0.2s ease;
+  transition-property: border-color, background-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
   display: block;
 }
-.mode-tab:hover {
+@media (hover: hover) { .mode-tab:hover {
   border-color: var(--accent);
-}
+} }
 .mode-tab.active {
   border-color: var(--accent);
   background: #f0f7fc;
@@ -443,3 +445,121 @@ body {
 @media (max-width: 700px) {
   .stats-grid, .steps, .about-grid, .project-info-grid, .mode-tabs, .about-comparison-grid { grid-template-columns: 1fr; }
 }
+
+
+/* ---------- Polish layer (better-ui) ---------- */
+:root {
+  --font-body: "Inter", "Segoe UI", Roboto, -apple-system, sans-serif;
+  --font-display: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --shadow-border:
+    0px 0px 0px 1px oklch(0 0 0 / 0.06),
+    0px 1px 2px -1px oklch(0 0 0 / 0.06),
+    0px 2px 4px 0px oklch(0 0 0 / 0.04);
+  --shadow-border-hover:
+    0px 0px 0px 1px oklch(0 0 0 / 0.08),
+    0px 1px 2px -1px oklch(0 0 0 / 0.08),
+    0px 2px 4px 0px oklch(0 0 0 / 0.06);
+  --radius: 12px;
+  --text-low: #b8433d;
+  --text-medium: #9a6b00;
+  --text-high: #2e7d5b;
+}
+
+body { font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+h1, h2, .hero h1, .result-value { font-family: var(--font-display); letter-spacing: -0.01em; text-wrap: balance; }
+.stat-value, .proba-pct, .metrics-table td, .history-table td, code, .trace-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+.stat-value { font-weight: 500; }
+.history-table td:nth-child(2), .metrics-table td:first-child { font-family: var(--font-body); }
+
+/* Surfaces: shadows for depth, keep a transparent border for forced-colors mode */
+.stat-card, .step, .form-section, .result-section, .history-section, .about-section,
+.batch-upload-card, .evaluation-card, .project-info-card, .explain-card, .proba-bars,
+.inputs-summary, .advisory-card {
+  border: 1px solid transparent;
+  box-shadow: var(--shadow-border);
+  border-radius: var(--radius);
+}
+.form-section .stat-card, .form-section .batch-upload-card, .form-section .evaluation-card,
+.about-section .project-info-card, .result-section .explain-card, .result-section .proba-bars,
+.result-section .inputs-summary, .result-section .advisory-card { border-radius: 10px; }
+
+/* Header navigation */
+.site-header nav a { transition-property: color; transition-duration: 150ms; transition-timing-function: ease-out; padding: 6px 0; }
+.site-header nav a.active { color: white; box-shadow: inset 0 -2px 0 var(--accent); }
+@media (hover: hover) { .site-header nav a:hover { color: white; } }
+
+/* Buttons: press scales to 0.96 */
+.btn {
+  -webkit-tap-highlight-color: transparent;
+  transition-property: scale, background-color, box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+.btn-outline { border: 1px solid transparent; box-shadow: var(--shadow-border); }
+@media (hover: hover) {
+  .btn-primary:hover { background: #256d9e; }
+  .btn-secondary:hover { background: var(--navy-dark); }
+  .btn-outline:hover { box-shadow: var(--shadow-border-hover); }
+}
+.btn:not(:disabled):active { scale: 0.96; }
+.btn:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.hero-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px; }
+.author-badge { font-family: var(--font-mono); font-size: 0.85rem; }
+
+.categories { margin-top: 48px; }
+.categories h2 { text-align: center; color: var(--navy-dark); }
+.cat h3 { font-family: var(--font-display); font-size: 1.15rem; }
+.cat-low h3 { color: var(--text-low); }
+.cat-medium h3 { color: var(--text-medium); }
+.cat-high h3 { color: var(--text-high); }
+.text-low { color: var(--text-low) !important; }
+.text-medium { color: var(--text-medium) !important; }
+.text-high { color: var(--text-high) !important; }
+
+/* Batch page */
+.batch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 24px 0; }
+.batch-upload-card { background: var(--card); padding: 24px; }
+.batch-upload-card h3 { margin-top: 0; }
+.batch-form { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 16px 0 8px; }
+.batch-results-container { margin-top: 36px; }
+.evaluation-card { background: var(--card); padding: 24px; margin-bottom: 24px; }
+.evaluation-card h3 { margin-top: 0; }
+.eval-headline { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; color: var(--muted); }
+.eval-headline .stat-value { display: inline; color: var(--navy-dark); }
+.confusion { max-width: 460px; }
+.confusion th, .confusion td { text-align: center; padding: 8px 10px; }
+.confusion td.diag { background: #e8f1f8; font-weight: 600; }
+.miss { color: var(--text-low); font-weight: 700; }
+.alert-warn { background: #fff7e6; color: #7a5600; border: 1px solid #f3dca6; padding: 12px 16px; border-radius: 6px; margin: 16px 0; }
+.alert-warn summary { cursor: pointer; font-weight: 600; }
+.table-wrap { overflow-x: auto; }
+
+.site-footer a { color: inherit; }
+
+@media (max-width: 700px) {
+  .stats-grid, .steps, .batch-grid { grid-template-columns: 1fr; }
+  .site-header nav { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+  .site-header nav a { margin-left: 0; }
+  .form-section, .result-section, .history-section, .about-section { padding: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn:not(:disabled):active { scale: 1; }
+}
+.history-table td .badge, .history-table td.text-muted, .history-table td .mode-pill { font-family: var(--font-body); }
+.result-header .lead { margin-left: 0; }
+.result-section .proba-bars, .result-section .inputs-summary { padding: 20px 24px; }
+.result-actions { margin-top: 24px; }
+.form-section .lead, .history-section .lead, .about-section .lead { margin-left: 0; }
+.field-hint a, .empty-state a { color: var(--accent); }
+.mode-pill, .history-table td.text-muted { white-space: nowrap; }
+.history-table th { white-space: nowrap; }
+.history-table { font-size: 0.9rem; }
+.history-table td, .history-table th { padding-left: 8px; padding-right: 8px; }

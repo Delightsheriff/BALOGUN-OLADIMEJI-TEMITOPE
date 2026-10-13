@@ -5,10 +5,10 @@
     <div class="history-header">
       <div>
         <h1>Prediction History</h1>
-        <p class="lead">Audit trail of all student classifications performed by the system.</p>
+        <p class="lead">Every prediction made on this server, newest first (latest 100 shown).</p>
       </div>
       <div>
-        <a href="{{ url_for('export_history') }}" class="btn btn-primary">⬇ Export to CSV</a>
+        <a href="{{ url_for('export_history') }}" class="btn btn-primary">Export to CSV</a>
       </div>
     </div>
 
@@ -32,21 +32,21 @@
     </form>
 
     {% if rows|length == 0 %}
-      <p class="empty-state">No matching prediction records found.</p>
+      <p class="empty-state">No predictions yet. <a href="{{ url_for('predict') }}">Make a prediction</a> or <a href="{{ url_for('batch_predict') }}">upload a class file</a>.</p>
     {% else %}
-      <table class="history-table">
+      <div class="table-wrap"><table class="history-table">
         <thead>
           <tr>
             <th>#</th>
             <th>Student</th>
             <th>Mode</th>
-            <th>Study Time</th>
+            <th>Study</th>
             <th>Failures</th>
             <th>Absences</th>
-            <th>G1 (CA)</th>
-            <th>G2 (Exam)</th>
-            <th>Predicted Result</th>
-            <th>Date &amp; Time</th>
+            <th>G1</th>
+            <th>G2</th>
+            <th>Result</th>
+            <th>Date</th>
           </tr>
         </thead>
         <tbody>
@@ -71,7 +71,7 @@
             </tr>
           {% endfor %}
         </tbody>
-      </table>
+      </table></div>
     {% endif %}
   </section>
 {% endblock %}

@@ -8,10 +8,14 @@
     <div class="project-info-card">
       <h3>Project &amp; Researcher Information</h3>
       <div class="project-info-grid">
-        <p><strong>Student Name:</strong> BALOGUN OLADIMEJI TEMITOPE</p>
-        <p><strong>Matriculation Number:</strong> U2022/5570093</p>
-        <p><strong>Department:</strong> Department of Computer Science</p>
-        <p><strong>Faculty &amp; Institution:</strong> Faculty of Computing, University of Port Harcourt</p>
+        <p><strong>Project:</strong> {{ project.title }}</p>
+        <p><strong>Student:</strong> {{ project.student }}</p>
+        <p><strong>Matriculation Number:</strong> {{ project.matric_number }}</p>
+        <p><strong>Supervisor:</strong> {{ project.supervisor }}</p>
+        <p><strong>Department:</strong> {{ project.department }}, {{ project.faculty }}</p>
+        <p><strong>Institution:</strong> {{ project.university }}</p>
+        <p><strong>Session:</strong> {{ project.session }}</p>
+        <p><strong>Date:</strong> {{ project.date }}</p>
       </div>
     </div>
 
@@ -19,7 +23,7 @@
       <div>
         <h3>Algorithm &amp; Implementation</h3>
         <p>CART Decision Tree (Gini index), implemented via Python scikit-learn.
-           Configured with balanced class weights, depth limit (max_depth=4), and min_samples_leaf=4 to guard against overfitting.</p>
+           Settings: max_depth=4, min_samples_leaf=4, max_features=3 (full-term model) and balanced class weights, to keep the tree small and readable and to limit overfitting.</p>
       </div>
       <div>
         <h3>Benchmark Dataset</h3>
@@ -39,9 +43,11 @@
 
     <div class="about-comparison-grid">
       <div>
-        <h3>📊 1. Balanced Full-Term Model (With G2)</h3>
+        <h3>1. Full-Term Model (with G2)</h3>
         <table class="metrics-table">
-          <tr><td>Accuracy</td><td><strong>{{ (results.accuracy * 100) | round(1) }}%</strong></td></tr>
+          <tr><td>Accuracy (test set)</td><td><strong>{{ (results.accuracy * 100) | round(1) }}%</strong></td></tr>
+          <tr><td>Accuracy (training set)</td><td>{{ (results.train_accuracy * 100) | round(1) }}%</td></tr>
+          {% if new_data %}<tr><td>Accuracy ({{ new_data.records }} new records)</td><td>{{ new_data.full_model.accuracy }}%</td></tr>{% endif %}
           <tr><td>Precision (weighted)</td><td>{{ (results.precision_weighted * 100) | round(1) }}%</td></tr>
           <tr><td>Recall (weighted)</td><td>{{ (results.recall_weighted * 100) | round(1) }}%</td></tr>
           <tr><td>F1-score (weighted)</td><td>{{ (results.f1_weighted * 100) | round(1) }}%</td></tr>
@@ -56,10 +62,12 @@
       </div>
 
       <div>
-        <h3>⚡ 2. Early-Warning Model (CA Phase - No G2)</h3>
+        <h3>2. Early-Warning Model (without G2)</h3>
         {% if results.early_model %}
         <table class="metrics-table">
-          <tr><td>Accuracy</td><td><strong>{{ (results.early_model.accuracy * 100) | round(1) }}%</strong></td></tr>
+          <tr><td>Accuracy (test set)</td><td><strong>{{ (results.early_model.accuracy * 100) | round(1) }}%</strong></td></tr>
+          <tr><td>Accuracy (training set)</td><td>{{ (results.early_model.train_accuracy * 100) | round(1) }}%</td></tr>
+          {% if new_data %}<tr><td>Accuracy ({{ new_data.records }} new records)</td><td>{{ new_data.early_model.accuracy }}%</td></tr>{% endif %}
           <tr><td>Precision (weighted)</td><td>{{ (results.early_model.precision_weighted * 100) | round(1) }}%</td></tr>
           <tr><td>Recall (weighted)</td><td>{{ (results.early_model.recall_weighted * 100) | round(1) }}%</td></tr>
           <tr><td>F1-score (weighted)</td><td>{{ (results.early_model.f1_weighted * 100) | round(1) }}%</td></tr>
@@ -73,6 +81,11 @@
         </table>
         {% endif %}
       </div>
+    </div>
+    <div class="project-info-card">
+      <h3>Source Code</h3>
+      <p>The complete source code, dataset and trained models can be downloaded as one zip file.</p>
+      <a class="btn btn-primary" href="{{ url_for('download_source') }}">Download Source Code (.zip)</a>
     </div>
   </section>
 {% endblock %}
